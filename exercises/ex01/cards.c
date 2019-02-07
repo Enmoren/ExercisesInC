@@ -21,7 +21,7 @@
  */
 void updateCurrentCount(int val, int *count){
 	if ((val > 2) && (val < 7)) {
-			(*count)++;
+			*count += 1;
 		} else if (val == 10) {
 			(*count)--;
 		}
@@ -54,9 +54,7 @@ int defaultVal(int val, char * card_name){
  */
 void updateValCount(int val, int *count, char *card_name){
 	switch(card_name[0]) {
-			case 'K':
-			case 'Q':
-			case 'J':
+			case 'K':case 'Q':case 'J':
 				val = 10;
 				break;
 			case 'A':
