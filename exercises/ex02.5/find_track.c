@@ -38,18 +38,38 @@ void find_track(char search_for[])
 // Prints track number and title.
 void find_track_regex(char pattern[])
 {
-    int status;
-    regex_t re;
+    regex_t regex;
+    char msgbug[100];
 
-    if (regcomp(&re, pattern, REG_EXTENDED|REG_NOSUB) != 0) {
-        return(0);      /* report error */
+    /* Compile regular expression */
+    int reti = regcomp(&regex, pattern, REG_EXTENDED);
+    if (reti) {
+        fprintf(stderr, "Could not compile regex\n");
+        exit(1);
     }
-    status = regexec(&re, string, (size_t) 0, NULL, 0);
-    regfree(&re);
-    if (status != 0) {
-        return(0);      /* report error */
+
+    int i;
+    for (i=0; i<NUM_TRACKS; i++) {
+        /* Execute regular expression */
+        reti = regexec(&regex, tracks[i], 0, NULL, 0);
+        /* Print the track if a match is found once the return is 0 */
+        if (!reti) {
+            printf("Track %i: '%s'\n", i, tracks[i]);
+        }
+        /* Jump to next line if no match is found */
+        else if (reti == REG_NOMATCH) {
+            continue;
+        }
+        /* Exit the program if error occurs */
+        else {
+            regerror(reti, &regex, pattern, sizeof(msgbug));
+            fprintf(stderr, "Regex match failed: %s\n", msgbug);
+            exit(1);
+        }
     }
-    return(1);
+
+    /* Free memory allocated to the pattern buffer by regcomp() */
+    regfree(&regex);
 }
 
 // Truncates the string at the first newline, if there is one.
@@ -70,8 +90,8 @@ int main (int argc, char *argv[])
     fgets(search_for, 80, stdin);
     rstrip(search_for);
 
-    find_track(search_for);
-    //find_track_regex(search_for);
+    // find_track(search_for);
+    find_track_regex(search_for);
 
     return 0;
 }
