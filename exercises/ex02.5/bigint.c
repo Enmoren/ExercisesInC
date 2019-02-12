@@ -32,9 +32,23 @@ It is the caller's responsibility to free the result.
 s: string
 returns: string
 */
+
+
 char *reverse_string(char *s) {
-    //TODO: Fill this in.
-    return "";
+    // Use dynamic allocate memory to store variables for reversed string */
+    char *str;
+    int i = 0;
+    size_t len = strlen(s);
+    // Add one more space in dynamic allocate memory to include terminator*/
+    str = (char *) malloc( len + 1 );
+    char *t = s + len - 1;
+    while (t >= s){
+        str[i] = *t;
+        i++;
+        t--;
+    }
+    s = str;
+    return s;
 }
 
 /* ctoi: Converts a character to integer.
@@ -52,9 +66,13 @@ int ctoi(char c) {
 i: integer 0 to 9
 returns: character '0' to '9'
 */
+
+/* i is the ofset from '0'
+*/
 char itoc(int i) {
-    //TODO: Fill this in, with an appropriate assertion.
-    return '0';
+    assert(i >= 0 && i <= 9);
+    //  '0' is interpreted by the compiler as ASCII code of zero character. 
+    return i + '0';
 }
 
 /* add_digits: Adds two decimal digits, returns the total and carry.
@@ -70,7 +88,14 @@ carry: pointer to char
 
 */
 void add_digits(char a, char b, char c, char *total, char *carry) {
-    //TODO: Fill this in.
+    // Convert char to integer, do arithmatics and convert them back to char
+    int a_t = ctoi(a);
+    int b_t = ctoi(b);
+    int c_t = ctoi(c);
+    int sum = a_t + b_t + c_t;
+    *total = itoc(sum%10);
+
+    *carry = itoc(sum/10);
 }
 
 /* Define a type to represent a BigInt.
@@ -138,6 +163,7 @@ void print_bigint(BigInt big) {
     printf("%c", c);
 }
 
+
 /* make_bigint: Creates and returns a BigInt.
 
 Caller is responsible for freeing.
@@ -155,6 +181,7 @@ void test_reverse_string() {
     char *t = reverse_string(s);
     if (strcmp(t, "321") == 0) {
         printf("reverse_string passed\n");
+        printf("%p",t);
     } else {
         printf("reverse_string failed\n");
     }
@@ -184,7 +211,7 @@ void test_add_bigint() {
     char *t = "99999999999999999999999999999999999999999999";
     char *res = "000000000000000000000000000000000000000000001";
 
-    BigInt big1 = make_bigint(s);    
+    BigInt big1 = make_bigint(s);
     BigInt big2 = make_bigint(t);
     BigInt big3 = malloc(100);
 
@@ -203,8 +230,6 @@ int main (int argc, char *argv[])
     test_itoc();
     test_add_digits();
 
-    //TODO: When you have the first three functions working,
-    //      uncomment the following, and it should work.
-    // test_add_bigint();
+    test_add_bigint();
     return 0;
 }
