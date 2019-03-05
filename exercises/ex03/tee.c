@@ -38,14 +38,14 @@ int main (int argc, char *argv[]){
 			case 'a':			// if option is detected, update flag value
 				append = 1;
 				break;
-			case 'i': 			//implement i option here
+			case 'i': 		//implement i option here
 				break;
 			default: 			// if wrong options is given
 				fprintf(stderr, "Unkown option: '%s'\n", optarg);
 				return 1;
 		}
 
-	argc -= optind;				// update the options
+	argc -= optind;		// update the options
 	argv += optind;
 
 

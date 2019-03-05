@@ -32,7 +32,7 @@ length: number of elements in the array
 returns: new array, caller must free
 */
 
-double* get_int_part(double arr[], int num){
+double* get_int_part(double *arr, int num){
     int loop;
     double* new_arr = (double *)malloc(sizeof(double)*num);
     for(loop = 0; loop < num; loop++) {
@@ -52,8 +52,9 @@ void test_get_int_part()
     double *int_part = get_int_part(array, length);
 
     for (int i=0; i<length; i++) {
-        //printf("%lf\n", result[i]);
-        assert(int_part[i] == expected[i]);
+        printf("%f\n", int_part[i]);
+        assert(fabs(int_part[i] - expected[i]) < (1e-8));
+        // assert(int_part[i] == expected[i]);
     }
 }
 
@@ -67,17 +68,18 @@ p: location where the address of the frac_array should go
 returns: new array, caller must free
 */
 
-double* get_both_parts(double arr[], int num, double **frac_arr){
+double *get_both_parts(double arr[], int num, double **frac_arr){
     int loop;
     double* new_arr = (double *)malloc(sizeof(double)*num);
-    // frac_arr = (double *)malloc(sizeof(double)*num);
+    double* frac_arr2 = (double *)malloc(sizeof(double)*num);
     for(loop = 0; loop < num; loop++) {
         double intpart, fractpart;
         fractpart = modf(arr[loop], &intpart);
         new_arr[loop] = intpart;
         // printf("%2f\n", )
-        *frac_arr[loop] = fractpart;
+        frac_arr2[loop] = fractpart;
    }
+   *frac_arr = frac_arr2;
    return new_arr;
 }
 
@@ -96,7 +98,7 @@ void test_get_both_parts()
         printf("%.18lf  %.18lf\n", int_part[i], expected_int[i]);
         printf("%.18lf  %.18lf\n", frac_part[i], expected_frac[i]);
         assert(int_part[i] == expected_int[i]);
-        assert(frac_part[i] == expected_frac[i]);
+        assert(fabs(frac_part[i] - expected_frac[i]) < 1e-8);
     }
 }
 

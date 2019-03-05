@@ -27,7 +27,7 @@ Sockaddr *sarecv;
 Sockaddr *salast;
 Sockaddr *sabind;
 
-socklen_t salen;                    /* length of a socket address */
+socklen_t salen;    /* length of a socket address */
 
 int main (int argc, char **argv)
 {
