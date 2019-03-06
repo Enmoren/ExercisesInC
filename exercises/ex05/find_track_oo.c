@@ -2,6 +2,15 @@
 
 Modified version of an example from Chapter 2.5 of Head First C.
 
+Author: Enmo Ren
+Copyright (c) Enmo Corporation.
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software.
+
 */
 
 #include <stdio.h>
@@ -30,8 +39,15 @@ typedef regex_t Regex;
 * returns: new Regex
 */
 Regex *make_regex(char *pattern, int flags) {
-    // FILL THIS IN!
-    return NULL;
+    // Dynamically allocate space for regex in heap
+    Regex *regex = (Regex*)malloc(sizeof(regex_t));
+    // Compile regex expression
+    int ret = regcomp(regex, pattern, flags);
+    if (ret) {
+        fprintf(stderr, "Could not compile regex\n");
+        exit(1);
+    }
+    return regex;
 }
 
 /* Checks whether a regex matches a string.
@@ -41,8 +57,17 @@ Regex *make_regex(char *pattern, int flags) {
 * returns: 1 if there's a match, 0 otherwise
 */
 int regex_match(Regex *regex, char *s) {
-    // FILL THIS IN!
-    return 0;
+    // Create message buffer
+    char msgbuf[100];
+    int ret = regexec(regex, s, 0, NULL, 0);
+    if (!ret) {
+        return 1;
+    } else {
+        //return error msg if there is not a match 
+        regerror(ret, regex, msgbuf, sizeof(msgbuf));
+        fprintf(stderr, "Regex match failed: %s\n", msgbuf);
+        return 0;
+    }
 }
 
 /* Frees a Regex.
@@ -50,7 +75,7 @@ int regex_match(Regex *regex, char *s) {
 * regex: Regex pointer
 */
 void regex_free(Regex *regex) {
-    // FILL THIS IN!
+    regfree(regex);
 }
 
 

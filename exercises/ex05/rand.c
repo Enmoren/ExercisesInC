@@ -1,7 +1,14 @@
 /*  Implementations of several methods for generating random floating-point.
 
-Copyright 2016 Allen B. Downey
-License: MIT License https://opensource.org/licenses/MIT
+Author: Enmo Ren
+Copyright (c) Enmo Corporation.
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software.
+
 */
 
 #include <stdlib.h>
@@ -78,7 +85,41 @@ float my_random_float2()
 // compute a random double using my algorithm
 double my_random_double()
 {
-    // TODO: fill this in
+  int x, y;
+  int64_t s;
+  int mant;
+  int exp = 126;
+  int mask = 1;
+
+  union {
+      double f;
+      int i;
+  } b;
+
+  // generate random bits until we see the first set bit
+  while (1) {
+      x = random();
+      y = random();
+      s = x << 32;
+      s = s | y;
+      if (s == 0) {
+          exp -= 63;
+      } else {
+          break;
+      }
+  }
+
+  // find the location of the first set bit and compute the exponent
+  while (x & mask) {
+      mask <<= 1;
+      exp--;
+  }
+
+  // use the remaining bit as the mantissa
+  mant = x >> 11;
+  b.i = (exp << 52) | mant;
+
+  return b.f;
 }
 
 // return a constant (this is a dummy function for time trials)
