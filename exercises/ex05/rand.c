@@ -9,6 +9,20 @@ a copy of this software and associated documentation files (the
 without limitation the rights to use, copy, modify, merge, publish,
 distribute, sublicense, and/or sell copies of the Software.
 
+Output from running time_rand.c
+194.282000 ms 	 dummy
+593.142000 ms 	 dummy2
+612.988000 ms 	 random_float
+678.098000 ms 	 my_random_float
+1677.001000 ms 	 my_random_float2
+2147.799000 ms 	 my_random_double
+644.223000 ms 	 random_double
+
+The dummy2 is the fastest random number generator, since it only call
+random() and cast the result to a float.
+
+random_double is much faster than my_random_double.
+
 */
 
 #include <stdlib.h>
@@ -70,7 +84,7 @@ float my_random_float2()
     }
 
     // find the location of the first set bit and compute the exponent
-    while (x & mask) {
+    while (x &  geneartormask) {
         mask <<= 1;
         exp--;
     }
@@ -85,23 +99,24 @@ float my_random_float2()
 // compute a random double using my algorithm
 double my_random_double()
 {
-  int x, y;
+  // declare all variables to be 64 bits integers
   int64_t s;
-  int mant;
-  int exp = 126;
-  int mask = 1;
+  int64_t mant;
+  int64_t exp = 1022;
+  int64_t mask = 1;
 
   union {
-      double f;
-      int i;
+      double d;
+      int64_t i;
   } b;
 
   // generate random bits until we see the first set bit
   while (1) {
-      x = random();
-      y = random();
-      s = x << 32;
-      s = s | y;
+      // Since random() generate 31 random bits, we need to call random() twice
+      // to get 64 bits result. This is done by shifting first random() output
+      // to the left by 32 bits and using '|' to setting last 32 bits with another
+      // call of random().
+      s = (random() << 32) | random();
       if (s == 0) {
           exp -= 63;
       } else {
@@ -110,16 +125,18 @@ double my_random_double()
   }
 
   // find the location of the first set bit and compute the exponent
-  while (x & mask) {
+  while (s & mask) {
       mask <<= 1;
       exp--;
   }
 
   // use the remaining bit as the mantissa
-  mant = x >> 11;
+  mant = s >> 11;
+  // For 64 bits, we are gonna shift exp to the left by 52 and setting the bits
+  // with mantissa.
   b.i = (exp << 52) | mant;
 
-  return b.f;
+  return b.d;
 }
 
 // return a constant (this is a dummy function for time trials)
