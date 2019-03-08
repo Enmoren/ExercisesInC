@@ -55,7 +55,7 @@ void free_point(Point *point) {
 /* Return a new Rectangle
 
 x, y: coordinates
-
+make_rectangle
 returns: new Rectangle; use free_rectangle to free
 */
 Rectangle *make_rectangle(Point *corner, double width, double height) {
