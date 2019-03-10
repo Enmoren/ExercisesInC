@@ -1,9 +1,13 @@
-/* Example code for Exercises in C.
+/*  Implementations of linked list in c
 
-Based on an example from http://www.learn-c.org/en/Linked_lists
+Author: Enmo Ren
+Copyright (c) Enmo Corporation.
 
-Copyright 2016 Allen Downey
-License: Creative Commons Attribution-ShareAlike 3.0
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software.
 
 */
 
@@ -54,7 +58,13 @@ void print_list(Node **list) {
 * returns: int or -1 if the list is empty
 */
 int pop(Node **list) {
-    // FILL THIS IN!
+    Node *curr = *list;
+    // Return -1 when the list is empty
+    if (curr == NULL){
+      return -1;
+    }
+    // Make the double pointer points to the new head
+    *list = curr->next;
     return 0;
 }
 
@@ -65,7 +75,9 @@ int pop(Node **list) {
 * val: value to add
 */
 void push(Node **list, int val) {
-    // FILL THIS IN!
+    Node *newHead = make_node(val, *list);
+    // Make the double pointer points to the new head
+    *list = newHead;
 }
 
 
@@ -79,19 +91,49 @@ void push(Node **list, int val) {
 * returns: number of nodes removed
 */
 int remove_by_value(Node **list, int val) {
-    // FILL THIS IN!
-    return 0;
+    Node *curr = *list;
+    Node *prev;
+    // If the head node holds the value to be removed
+    if (curr != NULL && curr->val == val){
+      *list = curr->next;   // Change head node
+      free(curr);           // Free removed node
+      return 1;
+    }
+    // Search for the first occurance of node to be removed
+    while (curr != NULL && curr->val != val) {
+        prev = curr;        // Keep track of previous node
+        curr = curr->next;  // Traverse the rest of node
+    }
+    if (curr == NULL){      // If val is not found in the list
+      return 0;
+    }
+    prev->next = curr->next;// Build new connection for nodes
+    free(curr);
+    return 1;
 }
 
 
-/* Reverses the elements of the list.
+/* Reverses the elements of the list.    free(curr);
+    return 1;
+}
 *
 * Does not allocate or free nodes.
 *
 * list: pointer to pointer to Node
 */
 void reverse(Node **list) {
-    // FILL THIS IN!
+    Node *curr = *list;
+    Node *prev = NULL;
+    Node *next;
+    // Loop through every element of the list
+    while (curr != NULL){
+        next = curr->next;  // Store next node
+        curr->next = prev;  // Reverse current node's pointer
+        prev = curr;        // Update previous and current node
+        curr = next;
+    }
+    // Link new head to pointer
+    *list = prev;
 }
 
 
