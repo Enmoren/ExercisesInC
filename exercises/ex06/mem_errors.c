@@ -64,6 +64,7 @@ int main()
 
     // and it catches use after free
     *use_after_free = 17;
+    // if we wanna use this value, we can free it later
     free(use_after_free);
 
     // never_free is definitely lost
@@ -71,12 +72,14 @@ int main()
     free(never_free);
 
     // the following line would generate a warning
+    // Free anything that is never allocated is bad
     // free(&never_allocated);
 
     // but this one doesn't
     // free_anything(&never_allocated);
 
     free(free_twice);
+    // Never free any chunk twice
     // free(free_twice);
 
     return 0;
