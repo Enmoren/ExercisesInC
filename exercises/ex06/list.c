@@ -65,7 +65,9 @@ int pop(Node **list) {
     }
     // Make the double pointer points to the new head
     *list = curr->next;
-    return 0;
+    int reval = curr->val;
+    free(curr);
+    return reval;
 }
 
 

@@ -37,7 +37,11 @@ char *strfilter2(char *string, char *letters) {
 
 char *strfilter3(char *string, char *letters) {
     int length = strlen(string);
+<<<<<<< HEAD
     char buffer[length+1];
+=======
+    char buffer[length];
+>>>>>>> 292a0bcb7451a62953248e3a7fb999c267b26dfd
     int j = 0;
 
     for (int i=0; i<length; i++) {
@@ -46,6 +50,7 @@ char *strfilter3(char *string, char *letters) {
             buffer[j++] = string[i];
         }
     }
+<<<<<<< HEAD
     buffer[j] = '\0';
     return strdup(buffer);
 }
@@ -61,6 +66,22 @@ char *strfilter4(char *string, char *letters) {
         }
     }
     int length = sizeof(buffer); //sizeof() givess out bytes
+=======
+    return buffer;
+}
+
+char *strfilter4(char *string, char *letters) {
+    char buffer[100];
+    char c;
+
+    while (c = *string++) {
+        char *ptr = strchr(letters, c);
+        if (ptr) {
+            strcat(buffer, c);
+        }
+    }
+    int length = sizeof(buffer);
+>>>>>>> 292a0bcb7451a62953248e3a7fb999c267b26dfd
     char *res = (char *) malloc (length * sizeof(char));
     strcpy(buffer, res);
     return res;

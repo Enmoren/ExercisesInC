@@ -68,7 +68,11 @@ void strsplit5(char *string, char sep, char *first, char *second) {
 void strsplit6(char *string, char sep, char *first, char *second) {
     char *copy = strdup(string);
     char *sep_ptr = strchr(copy, sep);
+<<<<<<< HEAD
     *sep_ptr = '\0';
+=======
+    *copy = '\0';
+>>>>>>> 292a0bcb7451a62953248e3a7fb999c267b26dfd
 
     // to see what's wrong with the following,
     first = copy;
@@ -76,7 +80,11 @@ void strsplit6(char *string, char sep, char *first, char *second) {
     // TODO: draw the stack diagram at this point
 }
 
+<<<<<<< HEAD
 void strsplit7(char *string, char sep, char **firt, char **second) {
+=======
+void strsplit7(char *string, char sep, char **first, char **second) {
+>>>>>>> 292a0bcb7451a62953248e3a7fb999c267b26dfd
     char *copy = strdup(string);
 
     char *sep_ptr = strchr(copy, sep);
