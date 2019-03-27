@@ -1,7 +1,13 @@
-/* Example code for Exercises in C.
+/*  Implementations of linked list in c
 
-Copyright 2016 Allen Downey
-License: Creative Commons Attribution-ShareAlike 3.0
+Author: Enmo Ren
+Copyright (c) Enmo Corporation.
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software.
 
 */
 
@@ -178,8 +184,13 @@ int hash_hashable(Hashable *hashable)
 */
 int equal_int (void *ip, void *jp)
 {
-    // FILL THIS IN!
-    return 0;
+    int i = *(int *)ip;
+    int j = *(int *)jp;
+    if (i != j)
+    {
+      return 0;
+    }
+    return 1;
 }
 
 
@@ -192,8 +203,17 @@ int equal_int (void *ip, void *jp)
 */
 int equal_string (void *s1, void *s2)
 {
-    // FILL THIS IN!
-    return 0;
+    char *c1 = (char *)s1;
+    char *c2 = (char *)s2;
+    for(int i = 0; i < strlen(c1); i++)
+    {
+        char *ptr = strchr(c1, c2[i]);
+        if (!ptr)
+        {
+          return 0;
+        }
+    }
+    return 1;
 }
 
 
@@ -207,8 +227,7 @@ int equal_string (void *s1, void *s2)
 */
 int equal_hashable(Hashable *h1, Hashable *h2)
 {
-    // FILL THIS IN!
-    return 0;
+    return h1->equal(h1->key, h2->key);
 }
 
 
@@ -296,7 +315,14 @@ Node *prepend(Hashable *key, Value *value, Node *rest)
 /* Looks up a key and returns the corresponding value, or NULL */
 Value *list_lookup(Node *list, Hashable *key)
 {
-    // FILL THIS IN!
+    while (list != NULL)
+    {
+      if (list->key == key)
+      {
+        return list->value;
+      }
+      list = list->next;
+    }
     return NULL;
 }
 
@@ -341,15 +367,24 @@ void print_map(Map *map)
 /* Adds a key-value pair to a map. */
 void map_add(Map *map, Hashable *key, Value *value)
 {
-    // FILL THIS IN!
+    int index = key->hash(key->key) % map->n;
+    Node *list = map->lists[index];
+    Node *new_list = prepend(key, value, list);
+    map->lists[index] = new_list;
 }
 
 
 /* Looks up a key and returns the corresponding value, or NULL. */
 Value *map_lookup(Map *map, Hashable *key)
 {
-    // FILL THIS IN!
-    return NULL;
+    int index = key->hash(key->key) % map->n;
+    Node *list = map->lists[index];
+    Value *value = list_lookup(list, key);
+    if (value == NULL)
+    {
+      return NULL;
+    }
+    return value;
 }
 
 
