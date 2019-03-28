@@ -184,9 +184,9 @@ int hash_hashable(Hashable *hashable)
 */
 int equal_int (void *ip, void *jp)
 {
-    int i = *(int *)ip;
+    int i = *(int *)ip; //cast void pointer to int pointer and then dereference it
     int j = *(int *)jp;
-    if (i != j)
+    if (i != j)         //return 0 if two integers are not equal
     {
       return 0;
     }
@@ -203,12 +203,12 @@ int equal_int (void *ip, void *jp)
 */
 int equal_string (void *s1, void *s2)
 {
-    char *c1 = (char *)s1;
+    char *c1 = (char *)s1;  //cast void pointer to string pointer
     char *c2 = (char *)s2;
     for(int i = 0; i < strlen(c1); i++)
     {
         char *ptr = strchr(c1, c2[i]);
-        if (!ptr)
+        if (!ptr)           //return 0 if two string are not equal
         {
           return 0;
         }
@@ -315,9 +315,9 @@ Node *prepend(Hashable *key, Value *value, Node *rest)
 /* Looks up a key and returns the corresponding value, or NULL */
 Value *list_lookup(Node *list, Hashable *key)
 {
-    while (list != NULL)
+    while (list != NULL)    //tranverse the node list
     {
-      if (list->key == key)
+      if (list->key == key) //match keys in the list
       {
         return list->value;
       }
@@ -367,9 +367,9 @@ void print_map(Map *map)
 /* Adds a key-value pair to a map. */
 void map_add(Map *map, Hashable *key, Value *value)
 {
-    int index = key->hash(key->key) % map->n;
-    Node *list = map->lists[index];
-    Node *new_list = prepend(key, value, list);
+    int index = key->hash(key->key) % map->n;   //calculate legal index for lists
+    Node *list = map->lists[index];             //get list in the map to store new key-value pair
+    Node *new_list = prepend(key, value, list); //add new node to the list
     map->lists[index] = new_list;
 }
 
