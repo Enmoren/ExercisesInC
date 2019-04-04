@@ -2,6 +2,8 @@
 
 From http://www.ibm.com/developerworks/linux/tutorials/l-glib/
 
+gcc ex_compile.c -o ex_compile `pkg-config --cflags --libs glib-2.0`
+
 */
 
 #include <stdio.h>
