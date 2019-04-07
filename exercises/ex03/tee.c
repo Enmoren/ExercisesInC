@@ -48,7 +48,6 @@ int main (int argc, char *argv[]){
 	argc -= optind;		// update the options
 	argv += optind;
 
-
 	while(fgets(line, sizeof(line), stdin)!= NULL){
 		for(int i = 0; i < argc; i++){
 			if (append){
