@@ -43,10 +43,41 @@ int main(int argc, char *argv[])
         sprintf(var, "RSS_FEED=%s", feeds[i]);
         char *vars[] = {var, NULL};
 
-        int res = execle(PYTHON, PYTHON, SCRIPT, search_phrase, NULL, vars);
-        if (res == -1) {
-            error("Can't run script.");
+        pid_t pid = fork(); //Clone process
+        if (pid == -1){     //Error checking for cloning process
+          fprintf(stderr,"Can't fork process: %s\n", strerror(errno));
+          return 1;
+        }
+        if (pid == 0){     //running child process when pid is 0
+          int res = execle(PYTHON, PYTHON, SCRIPT, search_phrase, NULL, vars);
+          if (res == -1) {
+              error("Can't run script.");
+              return 1;
+          }
         }
     }
-    return 0;
+
+    /* parent process that waits for child processes and print errors */
+    printf("Hello from the parent.\n");
+
+    for (i=0; i<num_feeds; i++) {
+        //wait for child processes to complete
+        pid = wait(&status);
+
+        if (pid == -1) {
+            fprintf(stderr, "wait failed: %s\n", strerror(errno));
+            perror(argv[0]);
+            exit(1);
+        }
+
+        // check the exit status of the child
+        status = WEXITSTATUS(status);
+        printf("Child %d exited with error code %d.\n", pid, status);
+    }
+    // compute the elapsed time
+    stop = get_seconds();
+    printf("Elapsed time = %f seconds.\n", stop - start);
+
+    exit(0);
+    // return 0;
 }

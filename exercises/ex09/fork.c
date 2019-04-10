@@ -3,6 +3,42 @@
 Copyright 2016 Allen B. Downey
 License: MIT License https://opensource.org/licenses/MIT
 
+Result from running ./fork 3
+Creating child 0.
+Creating child 1.
+Creating child 2.
+Hello from child 0.
+Hello from the parent.
+Child 15540 exited with error code 0.
+Hello from child 1.
+Child 15541 exited with error code 1.
+Hello from child 2.
+Child 15542 exited with error code 2.
+Elapsed time = 2.000937 seconds.
+
+
+
+Creating child 0.
+Hello from the parent.
+Integer value in heap for child process is 0
+Address of heap segmentin child process is 0x212b010
+Integer value in stack is for child process 0
+Address of stack segmentin child process is 0x7fff63c8330c  //Child process will copy the address spaces with same value, but the segement will be seperated
+Global variable is 3
+Address of global variable in child process is 0x6020ac
+Hello from child 0.
+Global variable is 0
+Address of global variable in parent process is 0x6020ac
+Integer value in heap for parent process is 66            //Integer stored in the heap is not changed for parent process
+Address of heap segmentin parent process is 0x212b010
+Integer value in stack is for parent process 66           //Integer stored in the stack is not changed for parent process
+Address of stack segmentin parent process is 0x7fff63c8330c
+Child 24211 exited with error code 0.
+Elapsed time = 0.000680 seconds.
+
+Since the code and static segements are constant, theoretically they should share
+the same thing.
+
 */
 
 #include <stdio.h>
@@ -18,6 +54,7 @@ License: MIT License https://opensource.org/licenses/MIT
 // errno is an external global variable that contains
 // error information
 extern int errno;
+int global = 0;
 
 
 // get_seconds returns the number of seconds since the
@@ -33,6 +70,10 @@ double get_seconds() {
 void child_code(int i)
 {
     sleep(i);
+    global = 3;
+
+    printf("Global variable is %d\n", global);
+    printf("Address of global variable in child process is %p\n", &global);
     printf("Hello from child %d.\n", i);
 }
 
@@ -45,6 +86,9 @@ int main(int argc, char *argv[])
     pid_t pid;
     double start, stop;
     int i, num_children;
+    int stack = 66;
+    int *heap = (int*)malloc(128);
+    *heap = 66;
 
     // the first command-line argument is the name of the executable.
     // if there is a second, it is the number of children to create.
@@ -61,6 +105,8 @@ int main(int argc, char *argv[])
 
         // create a child process
         printf("Creating child %d.\n", i);
+        // printf("Global variable is %d\n", errno);
+        // printf("Address of global variable in parent process is %p\n", &errno);
         pid = fork();
 
         /* check for an error */
@@ -72,6 +118,14 @@ int main(int argc, char *argv[])
 
         /* see if we're the parent or the child */
         if (pid == 0) {
+            *heap = 0;
+            printf("Integer value in heap for child process is %d\n", *heap);
+            printf("Address of heap segmentin child process is %p\n", heap);
+
+            stack = 0;
+            printf("Integer value in stack is for child process %d\n", stack);
+            printf("Address of stack segmentin child process is %p\n", &stack);
+
             child_code(i);
             exit(i);
         }
@@ -88,6 +142,15 @@ int main(int argc, char *argv[])
             perror(argv[0]);
             exit(1);
         }
+
+        printf("Global variable is %d\n", global);
+        printf("Address of global variable in parent process is %p\n", &global);
+
+        printf("Integer value in heap for parent process is %d\n", *heap);
+        printf("Address of heap segmentin parent process is %p\n", heap);
+
+        printf("Integer value in stack is for parent process %d\n", stack);
+        printf("Address of stack segmentin parent process is %p\n", &stack);
 
         // check the exit status of the child
         status = WEXITSTATUS(status);
