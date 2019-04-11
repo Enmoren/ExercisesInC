@@ -38,17 +38,19 @@ int main(int argc, char *argv[])
     int num_feeds = 5;
     char *search_phrase = argv[1];
     char var[255];
+    pid_t parent_pid, child_pid;
+    int status;
 
     for (int i=0; i<num_feeds; i++) {
         sprintf(var, "RSS_FEED=%s", feeds[i]);
         char *vars[] = {var, NULL};
 
-        pid_t pid = fork(); //Clone process
-        if (pid == -1){     //Error checking for cloning process
+        pid_t child_pid = fork(); //Clone process
+        if (child_pid == -1){     //Error checking for cloning process
           fprintf(stderr,"Can't fork process: %s\n", strerror(errno));
           return 1;
         }
-        if (pid == 0){     //running child process when pid is 0
+        if (child_pid == 0){     //running child process when pid is 0
           int res = execle(PYTHON, PYTHON, SCRIPT, search_phrase, NULL, vars);
           if (res == -1) {
               error("Can't run script.");
@@ -57,27 +59,27 @@ int main(int argc, char *argv[])
         }
     }
 
-    /* parent process that waits for child processes and print errors */
-    printf("Hello from the parent.\n");
+/* First way of parent process waiting for child processes*/
 
-    for (i=0; i<num_feeds; i++) {
-        //wait for child processes to complete
-        pid = wait(&status);
+    while ((parent_pid = wait(&status)) > 0);
+    return 0;
 
-        if (pid == -1) {
-            fprintf(stderr, "wait failed: %s\n", strerror(errno));
-            perror(argv[0]);
-            exit(1);
-        }
+/* Second way of parent process that waits for child processes and print errors */
 
-        // check the exit status of the child
-        status = WEXITSTATUS(status);
-        printf("Child %d exited with error code %d.\n", pid, status);
-    }
-    // compute the elapsed time
-    stop = get_seconds();
-    printf("Elapsed time = %f seconds.\n", stop - start);
-
-    exit(0);
-    // return 0;
+    // printf("Hello from the parent.\n");
+    //
+    // for (i=0; i<num_feeds; i++) {
+    //     //wait for child processes to complete
+    //     pid = wait(&status);
+    //
+    //     if (pid == -1) {
+    //         fprintf(stderr, "wait failed: %s\n", strerror(errno));
+    //         perror(argv[0]);
+    //         exit(1);
+    //     }
+    //
+    //     // check the exit status of the child
+    //     status = WEXITSTATUS(status);
+    // }
+    // exit(0);
 }
