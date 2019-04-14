@@ -3,6 +3,17 @@
 Copyright 2016 Allen B. Downey
 License: MIT License https://opensource.org/licenses/MIT
 
+Results after commenting out the exit statement after calling child_code
+  Creating child 0.
+  Hello from the parent.
+  Hello from child 0.
+  Hello from the parent.
+  wait failed: No child processes
+  ./fork: No child processes
+  Child 24160 exited with error code 1.
+  Elapsed time = 0.000682 seconds.
+
+
 Result from running ./fork 3
 Creating child 0.
 Creating child 1.
@@ -27,7 +38,7 @@ Address of stack segmentin child process is 0x7fff63c8330c  //Child process will
 Global variable is 3
 Address of global variable in child process is 0x6020ac
 Hello from child 0.
-Global variable is 0
+Global variable in parent process is 0                    //Global value is not changed for parent process
 Address of global variable in parent process is 0x6020ac
 Integer value in heap for parent process is 66            //Integer stored in the heap is not changed for parent process
 Address of heap segmentin parent process is 0x212b010
@@ -143,7 +154,7 @@ int main(int argc, char *argv[])
             exit(1);
         }
 
-        printf("Global variable is %d\n", global);
+        printf("Global variable in parent process is %d\n", global);
         printf("Address of global variable in parent process is %p\n", &global);
 
         printf("Integer value in heap for parent process is %d\n", *heap);

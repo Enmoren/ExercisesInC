@@ -1,8 +1,14 @@
-/* Example from Head First C.
+/* The original program will only print result from first RSS feed.
+And it was modified by Enmo using fork() system call to execute different processes.
 
-Downloaded from https://github.com/twcamper/head-first-c
+Author: Enmo Ren
+Copyright (c) Enmo Corporation.
 
-Modified by Allen Downey.
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software.
 */
 
 #include <stdio.h>
@@ -41,6 +47,7 @@ int main(int argc, char *argv[])
     pid_t parent_pid, child_pid;
     int status;
 
+    // Create child process for each rss feed by calling fork()
     for (int i=0; i<num_feeds; i++) {
         sprintf(var, "RSS_FEED=%s", feeds[i]);
         char *vars[] = {var, NULL};
