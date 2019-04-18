@@ -3,13 +3,54 @@
 Copyright 2014 Allen Downey
 License: GNU GPLv3
 
+counter = 0
+address of i is 0x7f384e8aaf14
+counter = 0
+address of i is 0x7f384e0a9f14
+counter = 1
+address of i is 0x7f384d8a8f14
+counter = 1
+address of i is 0x7f384d0a7f14
+counter = 3
+address of i is 0x7f3847ffef14
+Final value of counter is 5
+
+The children access the shared variable, counter, without synchronization, so
+several threads can read the same value of counter before any threads increment it.
+In this case, threads are running concurrently. Different threads accessing
+value of counter concurrently might read same value. This is synchronization error.
+However, the final result is correct. 
+
+counter = 0
+address of i is 0x7f7cb1d0cf14
+counter = 0
+counter = 0
+address of i is 0x7f7cb250df14
+counter = 1
+address of i is 0x7f7cb0d0af14
+counter = 0
+address of i is 0x7f7cabffef14
+counter = 4
+address of i is 0x7f7caaffcf14
+counter = 5
+address of i is 0x7f7caa7fbf14
+counter = 6
+address of i is 0x7f7ca9ffaf14
+address of i is 0x7f7cb150bf14
+counter = 2
+address of i is 0x7f7cab7fdf14
+counter = 8
+address of i is 0x7f7ca97f9f14
+Final value of counter is 10
+
+
 */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
 
-#define NUM_CHILDREN 5
+#define NUM_CHILDREN 10
 
 /* Print an error message and exit.
 */
