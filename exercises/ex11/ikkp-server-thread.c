@@ -5,7 +5,8 @@ Modified by Allen Downey.
 This script is edited by Enmo Ren. The program creates new thread for every
 new connection. I tried to build multiple connection at the same time and it works!
 
-./ikkp-server-thread Waiting for connection on port 30000
+./ikkp-server-thread
+Waiting for connection on port 30000
 Segmentation fault (core dumped)
 
 When I deliberately cause a segmentation faul in say() through dereferrencing a
@@ -149,17 +150,19 @@ int read_in(int socket, char *buf, int len)
 }
 
 char intro_msg[] = "Internet Knock-Knock Protocol Server\nKnock, knock.\n";
-
+/* Child code for each thread
+*/
 void child_code(int connect_d)
 {
+    //no need to close the main socket since threads share memory.
+    //close(listener_d);
     char buf[255];
     if (say(connect_d, intro_msg) == -1) {
         close(connect_d);
-        exit(0);
+        exit(0);  //exit thread once the thread terminates
     }
 
     read_in(connect_d, buf, sizeof(buf));
-    // TODO (optional): check to make sure they said "Who's there?"
 
     if (say(connect_d, "Surrealist giraffe.\n") == -1) {
         close(connect_d);
@@ -167,7 +170,6 @@ void child_code(int connect_d)
     }
 
     read_in(connect_d, buf, sizeof(buf));
-    // TODO (optional): check to make sure they said "Surrealist giraffe who?"
 
     if (say(connect_d, "Bathtub full of brightly-colored machine tools.\n") == -1) {
         close(connect_d);
@@ -176,6 +178,8 @@ void child_code(int connect_d)
     close(connect_d);
 }
 
+/* generate new thread
+*/
 pthread_t make_thread(void *(*entry)(void *), int *connect_d)
 {
     int ret;
@@ -188,6 +192,8 @@ pthread_t make_thread(void *(*entry)(void *), int *connect_d)
     return thread;
 }
 
+/* wait for child threads
+*/
 void join_thread(pthread_t thread)
 {
     int ret = pthread_join(thread, NULL);
@@ -195,7 +201,8 @@ void join_thread(pthread_t thread)
         error("pthread_join failed");
     }
 }
-
+ /* entry function for running child code
+ */
 void *entry(void *arg)
 {
     int connect_d = *(int *) arg;
@@ -206,6 +213,7 @@ void *entry(void *arg)
 
 int main(int argc, char *argv[])
 {
+    // create array for threads
     int i = 0;
     pthread_t child[NUM_CHILDREN];
     // set up the signal handler
@@ -226,13 +234,13 @@ int main(int argc, char *argv[])
         int connect_d = open_client_socket();
         int *connect_d_ptr = &connect_d;
         i = i + 1;
+        //genearate new thread with passed integer pointer, and run protocol
         child[i] = make_thread(entry, connect_d_ptr);
 
         // I was wondering if join thread is needed here
         join_thread(child[i]);
         //no need to close the secondary socket since threads share memory.
         //close(connect_d);
-
     }
     return 0;
 }

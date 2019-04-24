@@ -1,10 +1,13 @@
-/* Code from Head First C.
+/* The program connects to advice server and prints a reply.
 
-Modified by Tim Camper.
+Author: Enmo Ren
+Copyright (c) Enmo Corporation.
 
-Downloaded from https://github.com/twcamper/head-first-c/tree/master/11
-
-Modified by Allen Downey.
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software.
 
 */
 
@@ -35,20 +38,19 @@ int open_socket()
     name.sin_port = (in_port_t)htons(30000);
     name.sin_addr.s_addr = htonl(INADDR_ANY);
 
-
     // Do we need to reset socket options for client?
     // set socket options
-    int reuse = 1;
-    int res = setsockopt(sender_d,
-                   SOL_SOCKET,
-                   SO_REUSEADDR,
-                   (char *)&reuse,
-                   sizeof(int));
-    if (res == -1)
-        error("Can't set the 'reuse' option on the socket.");
+    // int reuse = 1;
+    // int res = setsockopt(sender_d,
+    //                SOL_SOCKET,
+    //                SO_REUSEADDR,
+    //                (char *)&reuse,
+    //                sizeof(int));
+    // if (res == -1)
+    //     error("Can't set the 'reuse' option on the socket.");
 
-    // connect the socket to a port
-    res = connect(sender_d, (struct sockaddr *) &name, sizeof(name));
+    // connect the socket to server
+    int res = connect(sender_d, (struct sockaddr *) &name, sizeof(name));
     if (res == -1)
         error("Can't bind the port");
 
@@ -73,6 +75,7 @@ int main(int argc, char *argv[])
         printf("%s", rec);
         bytes_received = recv(d_sock, rec, 255, 0);
     }
+    //print a reply to server
     printf("%s\n", "Here is the reply!");
     close(d_sock);
 

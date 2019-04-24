@@ -5,7 +5,8 @@ Modified by Allen Downey.
 This script is edited by Enmo Ren. The program creates new process for every
 new connection by using fork() system call. I tried to build multiple connection at the same time and it works!
 
-./ikkp-server-fork Waiting for connection on port 30000
+./ikkp-server-fork
+Waiting for connection on port 30000
 Waiting for connection on port 30000
 ...
 When I deliberately cause a segmentation faul in say() through dereferrencing a
