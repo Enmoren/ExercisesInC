@@ -237,8 +237,8 @@ int main(int argc, char *argv[])
         //genearate new thread with passed integer pointer, and run protocol
         child[i] = make_thread(entry, connect_d_ptr);
 
-        // I was wondering if join thread is needed here
-        join_thread(child[i]);
+        // No need to join threads since we don't want to wait other threads to complete
+        // join_thread(child[i]);
         //no need to close the secondary socket since threads share memory.
         //close(connect_d);
     }
