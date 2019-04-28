@@ -5,6 +5,24 @@ Based on an example from http://www.learn-c.org/en/Linked_lists
 Copyright 2016 Allen Downey
 License: Creative Commons Attribution-ShareAlike 3.0
 
+This program is modified to solve the leaking memory problems. The free_list()
+function is added to free each allocated node within a linked list to avoid leaking
+memoryt in the memory.
+
+make list_errors
+valgrind --leak-check=yes ./list_errors
+
+Result:
+==15551== HEAP SUMMARY:
+==15551==     in use at exit: 0 bytes in 0 blocks
+==15551==   total heap usage: 13 allocs, 13 frees, 1,216 bytes allocated
+==15551==
+==15551== All heap blocks were freed -- no leaks are possible
+==15551==
+==15551== For counts of detected and suppressed errors, rerun with: -v
+==15551== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+No error!!!!
+
 */
 
 #include <stdio.h>
@@ -178,6 +196,16 @@ Node *make_something() {
     return node3;
 }
 
+/* Free linked list
+*/
+void free_list (Node* node){
+  while (node != NULL){
+    Node* second = node->next;
+    free(node);
+    node = second;
+  }
+  return;
+}
 
 int main() {
     // make a list of even numbers
@@ -207,7 +235,11 @@ int main() {
     print_list(&empty);
 
     Node *something = make_something();
-    free(something);
+
+    // freed the memory for all allocated chunks
+    free_list(something);
+    free_list(empty);
+    free_list(test_list);
 
     return 0;
 }
